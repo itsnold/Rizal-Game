@@ -65,6 +65,7 @@
       ".read": true,
       "$session": {
         "$group": {
+          ".write": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)",
           "$device": {
             ".write": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true || (root.child('roster').child(auth.token.email.toLowerCase().replace('.', ',')).child('groupId').val() === $group && (!newData.exists() || root.child('sessions').child($session).child('leases').child($group).child('deviceId').val() === $device)))",
             ".validate": "newData.val() === true"

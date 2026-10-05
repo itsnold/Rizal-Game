@@ -73,6 +73,18 @@ describe('roles and private data', () => {
 });
 
 describe('device seat', () => {
+  it('allows controllers to atomically revoke a representative and clear group presence', async () => {
+    await assertSucceeds(set(ref(player(), `presence/session-1/${group}/device-1`), true));
+    await assertFails(set(ref(player(), `presence/session-1/${group}`), null));
+    await assertSucceeds(update(ref(host()), {
+      'roster/first,last@addu,edu,ph': null,
+      [`${base}/leases/${group}`]: null,
+      [`presence/session-1/${group}`]: null,
+    }));
+    expect((await get(ref(host(), 'roster/first,last@addu,edu,ph'))).exists()).toBe(false);
+    expect((await get(ref(host(), `presence/session-1/${group}`))).exists()).toBe(false);
+    expect((await get(ref(host(), `${base}/public/groups/${group}`))).exists()).toBe(true);
+  });
   it('renews the same device but rejects an occupied second device and another group', async () => {
     await assertSucceeds(set(ref(player(), `${base}/leases/${group}`), { uid: 'rep-1', deviceId: 'device-1', expiresAt: now + 60_000 }));
     await assertFails(set(ref(player(), `${base}/leases/${group}`), { uid: 'rep-1', deviceId: 'device-2', expiresAt: now + 60_000 }));
