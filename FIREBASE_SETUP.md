@@ -54,6 +54,15 @@ firebase deploy --only database --project rizal-game
 Alternatively, paste `database.rules.json` into Realtime Database → Rules and click
 **Publish**.
 
+If the host page says Firebase access is blocked, use its **Copy Firebase rules**
+button, paste those rules into that same Rules tab, click **Publish**, and reload
+the host page. If even `/lobby` cannot be read, the expected public-read rules are
+not active (or access is otherwise blocked); signing in again will not publish them.
+
+If the CLI cannot find `rizal-game`, it is signed into a Google account without
+access to this Firebase project. Use the Firebase console above, or sign the CLI
+into the account that owns the project with `firebase login:add` before deploying.
+
 After those rules are published, sign in to `/host` as **rsegundo@addu.edu.ph**.
 The primary account gets access directly from its verified Google email.
 **There is no UID lookup or manual `adminUsers` setup anymore.** Old UID-based

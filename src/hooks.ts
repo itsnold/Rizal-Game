@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
-import { backend, friendlyError, type Connection } from './backend';
+import { backend, friendlyError, isPermissionDenied, type Connection } from './backend';
 import { phaseOf, type Identity, type Lobby, type Round, type SessionPublic } from './model';
 import { PRIMARY_CONTROLLER } from './access';
 import { emailKey } from './model';
 
 export function useValue<T>(path: string | null) {
-  const [state, setState] = useState<{ path: string | null; value: T | null; error: string; loading: boolean }>({ path, value: null, error: '', loading: !!path });
+  const [state, setState] = useState<{ path: string | null; value: T | null; error: string; loading: boolean; permissionDenied: boolean }>({ path, value: null, error: '', loading: !!path, permissionDenied: false });
   useEffect(() => {
-    setState({ path, value: null, error: '', loading: !!path });
+    setState({ path, value: null, error: '', loading: !!path, permissionDenied: false });
     if (!path || !backend) return;
-    return backend.watch<T>(path, value => setState({ path, value, error: '', loading: false }), error => setState({ path, value: null, error: friendlyError(error), loading: false }));
+    return backend.watch<T>(path, value => setState({ path, value, error: '', loading: false, permissionDenied: false }), error => setState({ path, value: null, error: friendlyError(error), loading: false, permissionDenied: isPermissionDenied(error) }));
   }, [path]);
-  if (state.path !== path) return { value: null, error: '', loading: !!path };
+  if (state.path !== path) return { value: null, error: '', loading: !!path, permissionDenied: false };
   return state;
 }
 
@@ -50,7 +50,7 @@ export function useGame() {
   // Once a round is received, wall-clock changes and later offset samples cannot move its timer.
   const now = round ? round.opensAt + elapsed() : Date.now() + connection.offset;
   void tick;
-  return { connection, lobby: lobby.value, session: session.value, sessionId: lobby.value?.sessionId ?? '', round, phase: phaseOf(session.value, now), now, elapsed, error: lobby.error || session.error, loading: lobby.loading || session.loading };
+  return { connection, lobby: lobby.value, session: session.value, sessionId: lobby.value?.sessionId ?? '', round, phase: phaseOf(session.value, now), now, elapsed, error: lobby.error || session.error, loading: lobby.loading || session.loading, permissionDenied: lobby.permissionDenied || session.permissionDenied };
 }
 
 export function useWakeLock(enabled: boolean) {

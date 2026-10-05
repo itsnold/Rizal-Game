@@ -8,6 +8,7 @@ import { Choices, ErrorNotice, Eyebrow, Frame, Leaderboard, Loading, Notice, Rou
 import { QuestionManager, RosterManager } from './ContentManager';
 import ControllerManager from './ControllerManager';
 import { PRIMARY_CONTROLLER } from './access';
+import FirebaseAccessHelp from './FirebaseAccessHelp';
 
 function saveFile(filename: string, value: unknown) {
   const url = URL.createObjectURL(new Blob([JSON.stringify(value, null, 2)], { type: 'application/json' }));
@@ -69,15 +70,16 @@ export default function Host() {
   useEffect(() => { setPrepared(false); }, [questions.value]);
 
   useEffect(() => {
-    if (!backend || backend.demo || !identity || admin.loading || admin.value || !game.connection.connected || rejectingController.current) return;
+    if (!backend || backend.demo || !identity || admin.loading || admin.value || game.permissionDenied || !game.connection.connected || rejectingController.current) return;
     rejectingController.current = true;
     sessionStorage.setItem('rizal-auth-error', 'This email is not an authorized controller. Sign in with rsegundo@addu.edu.ph or an email added by that account.');
     void backend.logout().finally(() => { rejectingController.current = false; });
-  }, [identity?.uid, admin.loading, admin.value, game.connection.connected]);
+  }, [identity?.uid, admin.loading, admin.value, game.permissionDenied, game.connection.connected]);
 
   if (!backend) return <Frame page="HOST"><main className="narrow"><SetupCard /></main></Frame>;
   if (authLoading) return <Frame page="HOST"><Loading /></Frame>;
   if (!identity) return <Frame page="HOST"><main className="auth-main"><SignIn host /></main></Frame>;
+  if (!backend.demo && (game.permissionDenied || (admin.owner && (questions.permissionDenied || roster.permissionDenied)))) return <Frame page="CONTROL ROOM" identity={identity} connected={game.connection.connected}><main className="narrow"><FirebaseAccessHelp email={identity.email} /></main></Frame>;
   if (admin.loading) return <Frame page="HOST"><Loading label="Checking host access…" /></Frame>;
   if (!admin.value) return <Frame page="HOST" identity={identity}><main className="narrow"><section className="card access-card"><ShieldCheck size={32} /><h1>Controller access required.</h1><p><strong>{identity.email}</strong> is not authorized. Sign in with <strong>{PRIMARY_CONTROLLER}</strong> or ask that account to add you as a controller.</p><ErrorNotice>{admin.error}</ErrorNotice><button className="button primary" onClick={() => void backend!.logout()}>Switch account</button></section></main></Frame>;
 

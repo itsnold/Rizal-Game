@@ -33,6 +33,14 @@ beforeEach(async () => {
 afterAll(async () => { await env?.cleanup(); });
 
 describe('roles and private data', () => {
+  it('grants the primary email control without requiring a saved UID role', async () => {
+    await assertSucceeds(get(ref(host(), 'questions')));
+    await assertSucceeds(get(ref(host(), 'roster')));
+    await assertSucceeds(set(ref(host(), 'controllers/helper@addu,edu,ph'), true));
+    const helper = env.authenticatedContext('helper', { email: 'helper@addu.edu.ph', email_verified: true }).database();
+    await assertSucceeds(set(ref(helper, 'questions/from-helper'), { correctIndex: 1 }));
+    await assertFails(set(ref(helper, 'controllers/another@addu,edu,ph'), true));
+  });
   it('lets the display read public data but never answer keys, rosters, or answers', async () => {
     const db = env.unauthenticatedContext().database();
     await assertSucceeds(get(ref(db, `${base}/public`)));

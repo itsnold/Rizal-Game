@@ -36,12 +36,12 @@ export default function Player() {
   useWakeLock(!!group);
 
   useEffect(() => {
-    if (!backend || backend.demo || !identity || representative.loading || game.loading || !game.connection.connected || rejecting.current) return;
+    if (!backend || backend.demo || !identity || representative.loading || game.loading || game.permissionDenied || representative.permissionDenied || !game.connection.connected || rejecting.current) return;
     if (representative.value) return;
     rejecting.current = true;
     sessionStorage.setItem('rizal-auth-error', 'This email is not authorized for the game. Ask the presenter to authorize your exact school email.');
     void backend.logout().finally(() => { rejecting.current = false; });
-  }, [identity?.uid, representative.loading, representative.value, group?.id, game.loading, game.connection.connected]);
+  }, [identity?.uid, representative.loading, representative.value, representative.permissionDenied, group?.id, game.loading, game.permissionDenied, game.connection.connected]);
 
   useEffect(() => {
     const roundId = game.round?.id;

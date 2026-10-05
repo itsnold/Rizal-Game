@@ -153,9 +153,13 @@ function demoBackend(): Backend {
 // With no project config, render the setup screen rather than making invalid Firebase requests.
 export const backend: Backend | null = isDemo ? demoBackend() : isConfigured ? firebaseBackend() : null;
 export function route(path: string) { return path + (isDemo ? '?demo=1' : ''); }
+export function isPermissionDenied(error: unknown): boolean {
+  const code = (error as { code?: string })?.code?.toUpperCase() ?? '';
+  return code === 'PERMISSION_DENIED' || code === 'DATABASE/PERMISSION-DENIED';
+}
 export function friendlyError(error: unknown): string {
   const code = (error as { code?: string })?.code;
-  if (code === 'PERMISSION_DENIED' || code === 'database/permission-denied') return 'Firebase denied this action. Check your host access, representative whitelist, or round deadline.';
+  if (isPermissionDenied(error)) return 'Firebase rejected this database request. Controller access requires the project’s published database rules; player answers also require a valid seat and an open submission window.';
   if (code === 'auth/unauthorized-domain') return 'Add this website’s domain in Firebase Authentication → Settings → Authorized domains.';
   if (code === 'auth/operation-not-allowed') return 'Enable Google sign-in in Firebase Authentication → Sign-in method.';
   if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return 'Sign-in was closed. Tap the button to try again.';

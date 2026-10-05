@@ -7,6 +7,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
+    "deploy:rules": "firebase deploy --only database --project rizal-game",
     "test": "vitest run tests/game.test.ts",
     "test:rules": "firebase emulators:exec --only database --project demo-rizalgame \"vitest run tests/database.rules.test.ts\"",
     "test:e2e": "playwright test",
