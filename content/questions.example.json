@@ -1,0 +1,34 @@
+[
+  {
+    "id": "birthplace",
+    "section": "01 · Early life",
+    "prompt": "In which town was José Rizal born?",
+    "choices": ["Calamba", "Dapitan", "Manila", "Vigan"],
+    "correctIndex": 0,
+    "explanation": "José Rizal was born in Calamba, Laguna, on June 19, 1861."
+  },
+  {
+    "id": "first-novel",
+    "section": "02 · The novels",
+    "prompt": "Which novel did José Rizal publish first?",
+    "choices": ["El Filibusterismo", "Noli Me Tangere", "Florante at Laura", "La Solidaridad"],
+    "correctIndex": 1,
+    "explanation": "Noli Me Tangere was published in 1887. El Filibusterismo followed in 1891."
+  },
+  {
+    "id": "exile",
+    "section": "03 · Exile",
+    "prompt": "Where was Rizal exiled from 1892 to 1896?",
+    "choices": ["Cebu", "Bohol", "Dapitan", "Iloilo"],
+    "correctIndex": 2,
+    "explanation": "Rizal spent his exile in Dapitan, where he practiced medicine, taught, and worked on community projects."
+  },
+  {
+    "id": "profession",
+    "section": "04 · A life of learning",
+    "prompt": "What medical specialty did Rizal study?",
+    "choices": ["Cardiology", "Dermatology", "Pediatrics", "Ophthalmology"],
+    "correctIndex": 3,
+    "explanation": "Rizal specialized in ophthalmology, motivated in part by his mother’s failing eyesight."
+  }
+]

@@ -1,0 +1,76 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "controllers": {
+      ".read": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)",
+      ".write": "auth != null && auth.token.email_verified === true && auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph'",
+      "$email": {
+        ".read": "auth != null && auth.token.email_verified === true && auth.token.email.toLowerCase().replace('.', ',') === $email",
+        ".validate": "newData.val() === true && $email.matches(/^[a-z0-9_,+-]+@addu,edu,ph$/)"
+      }
+    },
+    "questions": {
+      ".read": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)",
+      ".write": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)"
+    },
+    "roundKeys": {
+      ".read": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)",
+      ".write": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)"
+    },
+    "roster": {
+      ".read": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)",
+      ".write": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)",
+      "$email": {
+        ".read": "auth != null && auth.token.email_verified === true && auth.token.email.toLowerCase().replace('.', ',') === $email"
+      }
+    },
+    "lobby": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)"
+    },
+    "sessions": {
+      "$session": {
+        ".read": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)",
+        ".write": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)",
+        "public": { ".read": true },
+        "leases": {
+          "$group": {
+            ".read": "auth != null && auth.token.email_verified === true && root.child('roster').child(auth.token.email.toLowerCase().replace('.', ',')).child('groupId').val() === $group",
+            ".write": "auth != null && auth.token.email_verified === true && auth.token.email.matches(/^[a-zA-Z0-9._+-]+@addu[.]edu[.]ph$/) && root.child('roster').child(auth.token.email.toLowerCase().replace('.', ',')).child('groupId').val() === $group && root.child('sessions').child($session).child('public/groups').child($group).exists() && newData.exists() && newData.hasChildren(['uid', 'deviceId', 'expiresAt']) && newData.child('uid').val() === auth.uid && newData.child('deviceId').isString() && newData.child('deviceId').val().length <= 80 && newData.child('expiresAt').isNumber() && newData.child('expiresAt').val() > now && newData.child('expiresAt').val() <= now + 100000 && (!data.exists() || data.child('deviceId').val() === newData.child('deviceId').val() || data.child('expiresAt').val() <= now)",
+            "uid": {},
+            "deviceId": {},
+            "expiresAt": {},
+            "$other": { ".validate": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)" }
+          }
+        },
+        "submissions": {
+          "$round": {
+            "$group": {
+              ".read": "auth != null && auth.token.email_verified === true && root.child('roster').child(auth.token.email.toLowerCase().replace('.', ',')).child('groupId').val() === $group",
+              ".write": "auth != null && auth.token.email_verified === true && auth.token.email.matches(/^[a-zA-Z0-9._+-]+@addu[.]edu[.]ph$/) && root.child('roster').child(auth.token.email.toLowerCase().replace('.', ',')).child('groupId').val() === $group && root.child('sessions').child($session).child('public/groups').child($group).exists() && !data.exists() && newData.exists() && root.child('sessions').child($session).child('public/currentRoundId').val() === $round && root.child('sessions').child($session).child('public/mode').val() === 'round' && root.child('sessions').child($session).child('public/rounds').child($round).child('state').val() === 'open' && now >= root.child('sessions').child($session).child('public/rounds').child($round).child('opensAt').val() && now <= root.child('sessions').child($session).child('public/rounds').child($round).child('acceptsUntil').val() && root.child('sessions').child($session).child('leases').child($group).child('uid').val() === auth.uid && root.child('sessions').child($session).child('leases').child($group).child('deviceId').val() === newData.child('deviceId').val() && root.child('sessions').child($session).child('leases').child($group).child('expiresAt').val() > now",
+              ".validate": "(auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)) || (newData.hasChildren(['uid', 'deviceId', 'choice', 'elapsedMs', 'receivedAt']) && newData.child('uid').val() === auth.uid && newData.child('choice').isNumber() && newData.child('choice').val() % 1 === 0 && newData.child('choice').val() >= 0 && newData.child('choice').val() < 4 && root.child('sessions').child($session).child('public/rounds').child($round).child('choices').hasChild(newData.child('choice').val() + '') && newData.child('elapsedMs').isNumber() && newData.child('elapsedMs').val() >= 0 && newData.child('elapsedMs').val() < 20000 && newData.child('elapsedMs').val() <= now - root.child('sessions').child($session).child('public/rounds').child($round).child('opensAt').val() + 250 && newData.child('receivedAt').val() === now)",
+              "uid": {},
+              "deviceId": {},
+              "choice": {},
+              "elapsedMs": {},
+              "receivedAt": {},
+              "$other": { ".validate": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true)" }
+            }
+          }
+        }
+      }
+    },
+    "presence": {
+      ".read": true,
+      "$session": {
+        "$group": {
+          "$device": {
+            ".write": "auth != null && auth.token.email_verified === true && (auth.token.email.toLowerCase() === 'rsegundo@addu.edu.ph' || root.child('controllers').child(auth.token.email.toLowerCase().replace('.', ',')).val() === true || (root.child('roster').child(auth.token.email.toLowerCase().replace('.', ',')).child('groupId').val() === $group && (!newData.exists() || root.child('sessions').child($session).child('leases').child($group).child('deviceId').val() === $device)))",
+            ".validate": "newData.val() === true"
+          }
+        }
+      }
+    }
+  }
+}
